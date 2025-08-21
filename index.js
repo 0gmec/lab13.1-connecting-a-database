@@ -1,23 +1,31 @@
+const express = require('express')
+const app = express()
 require("dotenv").config()
 const { MongoClient } = require('mongodb')
 
  
-// Replace this with your own connection string
 const uri = process.env.MONGO_URI
  
 const client = new MongoClient(uri)
- 
-async function run() {
+
+// app.get('/',async (run)=> {
+
+  // })
+
+app.get('/',async(req,res)=> {
   try {
-    // Connect the client to the server
-    await client.connect();
-    // Establish and verify connection
+    await client.connect()
     await client.db("admin").command({ ping: 1 })
+     res.status(200).json({message: "Successfully connected to the database!"})
     console.log("Connected successfully to MongoDB!")
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+  } catch (error) {
+  console.error()
+return res.status(500).json({ message: "Failed to connect to the database." })
+  }finally {
+    await client.close()
   }
-}
+})
+const PORT = process.env.PORT || 7777
+app.listen(PORT, ()=> console.log(`Server is running at http://localhost:${PORT}`))
  
-run().catch(console.dir);
+// run().catch(console.dir)
